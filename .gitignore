@@ -1,0 +1,9 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+#ignore the config file cause thats our secrets
+config.txt
+config.json
+
+
+
