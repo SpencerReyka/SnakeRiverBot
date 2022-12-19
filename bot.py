@@ -1,54 +1,11 @@
-import requests 
-import json
 import os
-from time import sleep
+from time import sleep, time
 from random import random
+from discord_layer.discord_layer import DiscordProxy
 
-class DiscordProxy():
-    def __init__(self):
-        print("initializing discord proxy")
-        if "FISH_AUTH" in os.environ: 
-           self.auth = os.getenv('FISH_AUTH')
-        else:
-            print("No Fishing Auth in env")
+from datetime import datetime
 
-        self.retrieve_message_headers = {
-            'authorization': self.auth
-        }
-        
-        self.fish_headers = {
-            'Content-Type': 'application/json',
-            'authorization': self.auth
-        }
-
-        self.fish_payload = {
-            'type': 2,
-            'application_id': os.getenv('FISH_APPLICATION_ID'),
-            'channel_id': os.getenv('FISH_CHANNEL_ID'),
-            'guild_id': os.getenv('FISH_GUILD_ID'),
-            'session_id': os.getenv('FISH_SESSION_ID'),
-            'data': {
-                'version': os.getenv('FISH_VERSION'),
-                'id': os.getenv('FISH_ID'),
-                'name': "fish",
-                'type': '1',
-                #'options': [],# [parameters] if parameters else [],
-                #'application_command': '',# cmd_data,
-                #'attachments': []
-            },
-        }
-
-
-    def retrieve_messages(self):
-        r = requests.get(f'https://discord.com/api/v9/channels/1042344356520149004/messages?limit=5', headers=self.retrieve_message_headers)
-
-        return json.loads(r.text)
-
-    def fish(self):
-        print("fishing")
-
-        r = requests.post(f'https://discord.com/api/v9/interactions', headers=self.fish_headers, json=self.fish_payload)
-
+from apscheduler.schedulers.background import BackgroundScheduler
 
 def retrieve_messages(proxy):
     verify = '**/verify**'
@@ -81,7 +38,23 @@ def fish(proxy):
 
 
 
+def start_loop():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(loop, 'interval', minutes=0)
+    scheduler.start()
+    print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+
+    try:
+        # This is here to simulate application activity (which keeps the main thread alive).
+        while True:
+            sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        # Not strictly necessary if daemonic mode is enabled but should be done if possible
+        scheduler.shutdown()
+
+
 def loop():
+    print("starting loop")
     proxy = DiscordProxy()
     while not retrieve_messages(proxy):
         sleep_num = 3.5 + random()
