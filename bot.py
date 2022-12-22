@@ -1,7 +1,7 @@
 import os
 from time import sleep, time
 from random import random
-from discord_layer.discord_layer import DiscordProxy
+from discord_layer.fishing_layer import FishingProxy
 
 from datetime import datetime
 
@@ -55,7 +55,7 @@ def start_loop():
 
 def loop():
     print("starting loop")
-    proxy = DiscordProxy()
+    proxy = FishingProxy()
     while not retrieve_messages(proxy):
         sleep_num = 3.5 + random()
         print("sleeping for " + str(sleep_num))

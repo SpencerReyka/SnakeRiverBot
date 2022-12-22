@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+from .discord_layer import DiscordProxy
 
 class FishingProxy(DiscordProxy):
     def __init__(self):
@@ -39,7 +40,7 @@ class FishingProxy(DiscordProxy):
 
     def retrieve_messages(self):
         r = requests.get(f'https://discord.com/api/v9/channels/1042344356520149004/messages?limit=5', headers=self.retrieve_message_headers)
-
+        print(r)
         return json.loads(r.text)
 
     def fish(self):
